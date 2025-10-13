@@ -16,16 +16,24 @@ app.use(clerkMiddleware());
 import userRoutes from "./routes/user.route.js";
 app.use("/api/users", userRoutes);
 
+app.use((err, req, res, next) => {
+  console.error("Express error:", err);
+  res.status(err.status || 500).json({
+    error: err.message || "Internal server error",
+  });
+});
+
 connectDB()
   .then(() => {
-    app.listen(ENV.PORT, () => {
+    const server = app.listen(ENV.PORT, () => {
       console.log(`Server is running on port ${ENV.PORT}`);
     });
 
-    app.on("error", (error) => {
+    server.on("error", (error) => {
       console.error("Server error:", error);
     });
   })
   .catch((error) => {
     console.error("Failed to connect to the database:", error);
+    process.exit(1);
   });
