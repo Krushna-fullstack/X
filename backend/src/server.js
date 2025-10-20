@@ -14,7 +14,10 @@ app.use(clerkMiddleware());
 
 // Routes
 import userRoutes from "./routes/user.route.js";
+import postRoutes from "./routes/post.route.js";
+
 app.use("/api/users", userRoutes);
+app.use("/api/posts", postRoutes);
 
 app.use((err, req, res, next) => {
   console.error("Express error:", err);
