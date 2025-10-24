@@ -14,8 +14,8 @@ const router = Router();
 
 // Public routes
 router.get("/", getPosts);
-router.get("/:postId", getPost);
 router.get("/user/:username", getUserPosts);
+router.get("/:postId", getPost);
 
 // Protected routes
 router.post("/", protectRoute, upload.single("image"), createPost);
