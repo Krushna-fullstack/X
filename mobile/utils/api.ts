@@ -10,7 +10,7 @@ const api = axios.create({ baseURL: API_BASE_URL, headers: { "Content-Type": "ap
 
 api.interceptors.request.use(async (config) => {
 const token = await getToken();
-console.log(token, "token")
+// console.log(token, "token")
 if (token) {
 config.headers.Authorization = `Bearer ${token}`;
 }
