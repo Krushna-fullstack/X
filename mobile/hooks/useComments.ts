@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Alert } from "react-native";
 import { useApiClient, commentApi } from "../utils/api";
@@ -8,6 +8,12 @@ export const useComments = () => {
   const api = useApiClient();
 
   const queryClient = useQueryClient();
+  const clearRef = useRef<string | null>(null);
+  const commentTextRef = useRef<string>("");
+
+  useEffect(() => {
+    commentTextRef.current = commentText;
+  }, [commentText]);
 
   const createCommentMutation = useMutation({
     mutationFn: async ({ postId, content }: { postId: string; content: string }) => {
@@ -15,7 +21,11 @@ export const useComments = () => {
       return response.data;
     },
     onSuccess: () => {
-      setCommentText("");
+      // Only clear the input if the user hasn't changed it since submitting
+      if (clearRef.current && commentTextRef.current === clearRef.current) {
+        setCommentText("");
+      }
+      clearRef.current = null;
       queryClient.invalidateQueries({ queryKey: ["posts"] });
     },
     onError: () => {
@@ -29,7 +39,10 @@ export const useComments = () => {
       return;
     }
 
-    createCommentMutation.mutate({ postId, content: commentText.trim() });
+    const content = commentText.trim();
+    // Record the exact submitted content so onSuccess can decide whether to clear
+    clearRef.current = content;
+    createCommentMutation.mutate({ postId, content });
   };
 
   return {

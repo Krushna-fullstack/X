@@ -13,10 +13,9 @@ import {
 } from "react-native";
 
 interface CommentsModalProps {
-  selectedPost: Post;
+  selectedPost: Post | null;
   onClose: () => void;
 }
-
 const CommentsModal = ({ selectedPost, onClose }: CommentsModalProps) => {
   const { commentText, setCommentText, createComment, isCreatingComment } =
     useComments();
